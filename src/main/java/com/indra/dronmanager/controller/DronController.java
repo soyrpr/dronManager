@@ -1,9 +1,8 @@
 package com.indra.dronmanager.controller;
 
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseStatus;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 
 import com.indra.dronmanager.dto.DronDto;
 import com.indra.dronmanager.model.Dron;
@@ -14,17 +13,6 @@ import com.indra.dronmanager.service.DronService;
 import lombok.RequiredArgsConstructor;
 
 import java.util.List;
-
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.GetMapping;
-
-
 
 
 @RestController
@@ -37,11 +25,9 @@ public class DronController {
     @PostMapping("/crear")
     @ResponseStatus(HttpStatus.CREATED)
     public Dron crearDron(@RequestBody DronDto dronDto, @RequestParam Long matrizVueloId) {
-        // Buscar la MatrizVuelo por ID
         MatrizVuelo matrizVuelo = matrizVueloRepository.findById(matrizVueloId)
                 .orElseThrow(() -> new RuntimeException("Matriz de vuelo no encontrada con ID: " + matrizVueloId));
         
-        // Llamar al servicio para crear el dron
         return dronService.crearDron(dronDto, matrizVuelo);
     }    
 
@@ -60,5 +46,12 @@ public class DronController {
         List<Dron> drones = dronService.obtenerTodosLosDrones();
         return ResponseEntity.ok(drones);
     }
+
+    @GetMapping("/buscar/{x}/{y}")
+    public ResponseEntity<Dron> obtenerDron(@PathVariable int x, @PathVariable int y) {
+        Dron dron = dronService.obtenerDron(x, y);
+        return ResponseEntity.ok(dron);
+    }
+    
     
 }

@@ -73,6 +73,11 @@ public class DronServiceImpl implements DronService{
         return dronRepository.findAll();
     }
 
+    @Override
+    public Dron obtenerDron(int x, int y){
+        return dronRepository.findByXAndY(x, y).orElseThrow(() -> new RuntimeException("No se encontró el dron en esas coordenadas."));
+    }
+
 
     @Override
     public void ejecutarOrdenes(int dronId) {
