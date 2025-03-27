@@ -13,4 +13,5 @@ public interface DronService {
     void ejecutarOrdenes(int dronId);
     List<Dron> moverDronesGrupales(List<DronDto> drones);
     List<Dron> obtenerTodosLosDrones();
+    Dron obtenerDron(int x, int y);
 }
