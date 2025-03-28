@@ -8,6 +8,7 @@ import com.indra.dronmanager.dto.DronDto;
 import com.indra.dronmanager.model.Dron;
 import com.indra.dronmanager.model.MatrizVuelo;
 import com.indra.dronmanager.model.Ordenes;
+import com.indra.dronmanager.model.Orientacion;
 import com.indra.dronmanager.repository.DronRepository;
 import com.indra.dronmanager.repository.MatrizVueloRepository;
 
@@ -80,10 +81,7 @@ public class DronServiceImpl implements DronService{
 
 
     @Override
-    public void ejecutarOrdenes(int dronId) {
-        Dron dron = dronRepository.findById(dronId)
-            .orElseThrow(() -> new RuntimeException("Dron no encontrado con ID: " + dronId));
-        
+    public void ejecutarOrdenes(Dron dron) {        
         for (Ordenes orden : dron.getOrdenes()) {
             switch (orden) {
                 case MOVE_FORWARD:
@@ -97,25 +95,95 @@ public class DronServiceImpl implements DronService{
                     break;
             }
         }
+
+        dronRepository.save(dron);
     }
 
     private void moverAdelante(Dron dron) {
-        // Implementación del movimiento
+        int nuevoX = dron.getX();
+        int nuevoY = dron.getY();
+
+        switch (dron.getOrientacion()) {
+            case N: 
+                nuevoY +=1;
+                break;
+            case S: 
+                nuevoY -=1;
+                break;
+            case E: 
+                nuevoX +=1;
+                break;
+            case O: 
+                nuevoX -=1;
+                break;
+        }
+
+        MatrizVuelo matrizVuelo = dron.getMatrizVuelo();
+        int maxX = matrizVuelo.getMaxX();
+        int maxY = matrizVuelo.getMaxY();
+
+        if(nuevoX < 0 || nuevoX > maxX || nuevoY < 0 || nuevoY > maxY){
+            throw new RuntimeException("El dron saldria feura de los limites del espacio asignado.");
+        }
+      
+        
+        if (dronRepository.existsByXAndY(nuevoX, nuevoY)){
+            throw new RuntimeException("Ya hay un dron en la posicion asignada.");
+        }
+
+        dron.setX(nuevoX);
+        dron.setY(nuevoY);
     }
 
     private void girarIzquierda(Dron dron) {
-        // Implementación del giro
+        switch (dron.getOrientacion()) {
+            case N: dron.setOrientacion(Orientacion.O);
+                break;
+            case O: dron.setOrientacion(Orientacion.S);
+                break;
+            case S: dron.setOrientacion(Orientacion.E);
+                break;
+            case E: dron.setOrientacion(Orientacion.N);
+                break;
+        }
     }
 
     private void girarDerecha(Dron dron) {
-        // Implementación del giro
+        switch (dron.getOrientacion()) {
+            case N: dron.setOrientacion(Orientacion.E);
+                break;
+            case E: dron.setOrientacion(Orientacion.S);
+                break;
+            case S: dron.setOrientacion(Orientacion.O);
+                break;
+            case O: dron.setOrientacion(Orientacion.N);
+                break;
+        }
     }
 
 
     @Override
-    public List<Dron> moverDronesGrupales(List<DronDto> drones) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'moverDronesGrupales'");
+    public List<Dron> moverDronesGrupales(List<Integer> dronIds, List<Ordenes> ordenes) {
+        List<Dron> drones = dronRepository.findAllById(dronIds);
+
+        for(Dron dron : drones) {
+            dron.setOrdenes(ordenes);
+            dronRepository.save(dron);
+            ejecutarOrdenes(dron);
+        }
+
+        return drones;
     }
 
+    @Override
+    public Dron moverDron(int dronId, List<Ordenes> ordenes) {
+        Dron dron = dronRepository.findById(dronId).orElseThrow(() -> new RuntimeException("Dron no encontrado según el ID indicado"));
+        
+        dron.setOrdenes(ordenes);
+        dronRepository.save(dron);
+
+        ejecutarOrdenes(dron);
+
+        return dron;
+    }
 }
