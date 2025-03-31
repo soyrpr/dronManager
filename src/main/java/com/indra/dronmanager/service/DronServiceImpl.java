@@ -10,7 +10,6 @@ import com.indra.dronmanager.model.MatrizVuelo;
 import com.indra.dronmanager.model.Ordenes;
 import com.indra.dronmanager.model.Orientacion;
 import com.indra.dronmanager.repository.DronRepository;
-import com.indra.dronmanager.repository.MatrizVueloRepository;
 
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -20,7 +19,6 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class DronServiceImpl implements DronService{
     private final DronRepository dronRepository;
-    private final MatrizVueloRepository matrizVueloRepository;  
 
     @Override
     public Dron crearDron(DronDto dronDto, MatrizVuelo matrizVuelo) {
@@ -123,7 +121,7 @@ public class DronServiceImpl implements DronService{
         int maxY = matrizVuelo.getMaxY();
 
         if(nuevoX < 0 || nuevoX > maxX || nuevoY < 0 || nuevoY > maxY){
-            throw new RuntimeException("El dron saldria feura de los limites del espacio asignado.");
+            throw new RuntimeException("El dron saldria fuera de los limites del espacio asignado.");
         }
       
         
@@ -165,6 +163,9 @@ public class DronServiceImpl implements DronService{
     @Override
     public List<Dron> moverDronesGrupales(List<Integer> dronIds, List<Ordenes> ordenes) {
         List<Dron> drones = dronRepository.findAllById(dronIds);
+        if(drones.size() != dronIds.size()){
+            throw new IllegalArgumentException("Alguno de los drones no han sido encontrados.");
+        }
 
         for(Dron dron : drones) {
             dron.setOrdenes(ordenes);

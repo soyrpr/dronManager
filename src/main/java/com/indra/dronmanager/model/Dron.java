@@ -2,6 +2,8 @@ package com.indra.dronmanager.model;
 
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -30,6 +32,7 @@ public class Dron {
 
     @ManyToOne
     @JoinColumn(name = "matriz_vuelo_id", nullable = false)
+    @JsonIgnore
     private MatrizVuelo matrizVuelo;
 
 }

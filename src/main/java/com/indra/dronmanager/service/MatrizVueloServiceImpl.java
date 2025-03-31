@@ -23,15 +23,13 @@ public class MatrizVueloServiceImpl implements MatrizVueloService {
     @Override
     @Transactional
     public MatrizVuelo guardarMatrizConDrones(MatrizVueloDTO matrizDTO) {
-        // Crear la matriz
+
         MatrizVuelo matriz = new MatrizVuelo();
         matriz.setMaxX(matrizDTO.getMaxX());
         matriz.setMaxY(matrizDTO.getMaxY());
         
-        // Guardar la matriz en la base de datos
         MatrizVuelo matrizGuardada = matrizVueloRepository.save(matriz);
 
-        // Crear los drones y asociarlos con la matriz
         for (DronDto dronDto : matrizDTO.getDrones()) {
             Dron dron = new Dron();
             dron.setNombre(dronDto.getNombre());
@@ -40,9 +38,8 @@ public class MatrizVueloServiceImpl implements MatrizVueloService {
             dron.setY(dronDto.getY());
             dron.setOrientacion(dronDto.getOrientacion());
             dron.setOrdenes(dronDto.getOrdenes());
-            dron.setMatrizVuelo(matrizGuardada); // Asociar el dron con la matriz
+            dron.setMatrizVuelo(matrizGuardada); 
 
-            // Guardar el dron en la base de datos
             dronRepository.save(dron);
         }
 
@@ -52,6 +49,9 @@ public class MatrizVueloServiceImpl implements MatrizVueloService {
 
     @Override
     public MatrizVuelo crearMatriz(MatrizVueloDTO matrizDTO) {
+        if (matrizDTO.getMaxX() <= 0 || matrizDTO.getMaxY() <= 0) {
+            throw new IllegalArgumentException("Las dimensiones de la matriz deben ser mayores a cero.");
+        }
         MatrizVuelo matriz = new MatrizVuelo();
         System.out.println(matrizDTO.getMaxX());
         matriz.setMaxX(matrizDTO.getMaxX());
@@ -61,7 +61,7 @@ public class MatrizVueloServiceImpl implements MatrizVueloService {
 
     @Override
     public MatrizVuelo obtenerMatrizPorId(Long id){
-        return matrizVueloRepository.findById(id).orElse(null);
+        return matrizVueloRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("Id no encontrado."));
     }
 
     @Override
