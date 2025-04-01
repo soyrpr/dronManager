@@ -8,31 +8,26 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-import java.sql.Array;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.assertj.core.util.Arrays;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.boot.test.context.SpringBootTest;
 
 import com.indra.dronmanager.dto.DronDto;
 import com.indra.dronmanager.dto.MatrizVueloDTO;
 import com.indra.dronmanager.model.Dron;
 import com.indra.dronmanager.model.MatrizVuelo;
-import com.indra.dronmanager.model.Orientacion;
 import com.indra.dronmanager.repository.DronRepository;
 import com.indra.dronmanager.repository.MatrizVueloRepository;
-import com.indra.dronmanager.service.MatrizVueloService;
 import com.indra.dronmanager.service.MatrizVueloServiceImpl;
 
 @ExtendWith(MockitoExtension.class) 
-public class MatrizVueloServiceTests {
+class MatrizVueloServiceTests {
 
         @Mock
         private MatrizVueloRepository matrizVueloRepository;
@@ -68,29 +63,29 @@ public class MatrizVueloServiceTests {
 
         @Test
         void testGuardarMatriz() {
-            DronDto dronDto = new DronDto();
-            dronDto.setNombre("Dron A");
-            dronDto.setModelo("Modelo 1");
-            dronDto.setX(3);
-            dronDto.setY(3);
-            dronDto.setOrientacion("N");
+            DronDto dronDtoA = new DronDto();
+            dronDtoA.setNombre("Dron A");
+            dronDtoA.setModelo("Modelo 1");
+            dronDtoA.setX(3);
+            dronDtoA.setY(3);
+            dronDtoA.setOrientacion("N");
         
             List<DronDto> drones = new ArrayList<>();
-            drones.add(dronDto);  
+            drones.add(dronDtoA);  
         
-            MatrizVueloDTO matrizVueloDTO = new MatrizVueloDTO();
-            matrizVueloDTO.setMaxX(5);
-            matrizVueloDTO.setMaxY(5);
-            matrizVueloDTO.setDrones(drones);  
+            MatrizVueloDTO matrizVueloDTOA = new MatrizVueloDTO();
+            matrizVueloDTOA.setMaxX(5);
+            matrizVueloDTOA.setMaxY(5);
+            matrizVueloDTOA.setDrones(drones);  
         
             MatrizVuelo matrizVuelo = new MatrizVuelo();
-            matrizVuelo.setMaxX(matrizVueloDTO.getMaxX());
-            matrizVuelo.setMaxY(matrizVueloDTO.getMaxY());
+            matrizVuelo.setMaxX(matrizVueloDTOA.getMaxX());
+            matrizVuelo.setMaxY(matrizVueloDTOA.getMaxY());
         
             when(matrizVueloRepository.save(any(MatrizVuelo.class))).thenReturn(matrizVuelo);
             when(dronRepository.save(any(Dron.class))).thenReturn(new Dron());
         
-            MatrizVuelo matrizGuardada = matrizVueloService.guardarMatrizConDrones(matrizVueloDTO);
+            MatrizVuelo matrizGuardada = matrizVueloService.guardarMatrizConDrones(matrizVueloDTOA);
         
             assertNotNull(matrizGuardada);
             assertEquals(5, matrizGuardada.getMaxX());
