@@ -4,6 +4,8 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.indra.dronmanager.dto.DronDto;
 import com.indra.dronmanager.model.Dron;
 import com.indra.dronmanager.model.MatrizVuelo;
@@ -117,8 +119,16 @@ public class DronController {
      */
     @PutMapping("/ordenesGrupales")
     public ResponseEntity<List<Dron>> moverDrones(@RequestBody Map<String, Object> request) {
-        List<Integer> dronIds = (List<Integer>) request.get("dronIds");
-        List<String> ordenesStrings = (List<String>) request.get("ordenes");
+        ObjectMapper objectMapper = new ObjectMapper();
+        List<Integer> dronIds = objectMapper.convertValue(request.get("dronIds"), new TypeReference<List<Integer>>() {
+        });
+        List<String> ordenesStrings;
+        try {
+            ordenesStrings = objectMapper.convertValue(request.get("ordenes"), new TypeReference<List<String>>() {
+            });
+        } catch (IllegalArgumentException e) {
+            throw new RuntimeException("Invalid format for 'ordenes' field", e);
+        }
 
         List<Ordenes> ordenes = ordenesStrings.stream().map(Ordenes::valueOf).collect(Collectors.toList());
 

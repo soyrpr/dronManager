@@ -1,7 +1,6 @@
 package com.indra.dronmanager;
 
 import com.indra.dronmanager.dto.DronDto;
-import com.indra.dronmanager.model.Orientacion;
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.Validation;
 import jakarta.validation.Validator;

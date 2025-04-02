@@ -14,9 +14,9 @@ import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.http.MediaType;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 
 import static org.mockito.Mockito.when;
@@ -31,10 +31,10 @@ class DronControllerTest {
     @Autowired
     private MockMvc mockMvc;
 
-    @MockBean
+    @MockitoBean
     private DronService dronService;
 
-    @MockBean
+    @MockitoBean
     private MatrizVueloRepository matrizVueloRepository;
 
     @InjectMocks
@@ -194,7 +194,6 @@ class DronControllerTest {
     @Test
     void testMoverDronesGrupales() throws Exception {
         List<Integer> dronIds = Arrays.asList(1, 2);
-        List<String> ordenes = Arrays.asList("MOVE_FORWARD", "TURN_LEFT");
 
         Dron dron1 = new Dron();
         dron1.setId(1L);
