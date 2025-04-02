@@ -53,14 +53,14 @@ public class DronDto {
      * Asigna la orientación del dron a partir de un String.
      * Maneja errores si el valor no es válido.
      *
-     * @param orientacion String que representa la orientación.
+     * @param n String que representa la orientación.
      * @throws IllegalArgumentException si el valor no es válido.
      */
-    public void setOrientacion(String orientacion) {
+    public void setOrientacion(String n) {
         try {
-            this.orientacion = Orientacion.valueOf(orientacion.toUpperCase());
+            this.orientacion = Orientacion.valueOf(n);
         } catch (IllegalArgumentException e) {
-            throw new IllegalArgumentException("Valor de orientación inválido: " + orientacion);
+            throw new IllegalArgumentException("Valor de orientación inválido: " + n);
         }
     }
 

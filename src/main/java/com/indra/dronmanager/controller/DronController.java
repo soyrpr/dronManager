@@ -15,6 +15,7 @@ import lombok.RequiredArgsConstructor;
 
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * Controlador para gestionar los drones dentro del sistema.
@@ -38,6 +39,9 @@ public class DronController {
     @PostMapping("/crear")
     @ResponseStatus(HttpStatus.CREATED)
     public Dron crearDron(@RequestBody DronDto dronDto, @RequestParam Long matrizVueloId) {
+        if (dronDto == null || matrizVueloId <= 0) {
+            throw new IllegalArgumentException("Invalid argument provided");
+        }
         MatrizVuelo matrizVuelo = matrizVueloRepository.findById(matrizVueloId)
                 .orElseThrow(() -> new RuntimeException("Matriz de vuelo no encontrada con ID: " + matrizVueloId));
 
@@ -113,7 +117,12 @@ public class DronController {
      */
     @PutMapping("/ordenesGrupales")
     public ResponseEntity<List<Dron>> moverDrones(@RequestBody Map<String, Object> request) {
-        List<Dron> drones = dronService.procesarOrdenesGrupales(request);
+        List<Integer> dronIds = (List<Integer>) request.get("dronIds");
+        List<String> ordenesStrings = (List<String>) request.get("ordenes");
+
+        List<Ordenes> ordenes = ordenesStrings.stream().map(Ordenes::valueOf).collect(Collectors.toList());
+
+        List<Dron> drones = dronService.moverDronesGrupales(dronIds, ordenes);
         return ResponseEntity.ok(drones);
     }
 }

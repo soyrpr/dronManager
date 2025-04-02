@@ -28,7 +28,7 @@ import com.indra.dronmanager.repository.DronRepository;
 import com.indra.dronmanager.repository.MatrizVueloRepository;
 import com.indra.dronmanager.service.DronServiceImpl;
 
-@ExtendWith(MockitoExtension.class) 
+@ExtendWith(MockitoExtension.class)
 public class DronServiceTest {
 
     @Mock
@@ -44,7 +44,7 @@ public class DronServiceTest {
     private MatrizVuelo matrizVuelo;
 
     @BeforeEach
-    void setUp(){
+    void setUp() {
         dronDto = new DronDto();
         dronDto.setNombre("Dron Test");
         dronDto.setModelo("Modelo Test");
@@ -58,9 +58,9 @@ public class DronServiceTest {
     }
 
     @Test
-    void testCrearDron(){
+    void testCrearDron() {
         Dron dronMock = new Dron();
-        dronMock.setId(1);
+        dronMock.setId(1L);
         dronMock.setNombre("Dron Test");
         dronMock.setX(5);
         dronMock.setY(5);
@@ -76,14 +76,16 @@ public class DronServiceTest {
     }
 
     @Test
-    void testCrearDronMatrizNula(){
-        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () ->{ dronService.crearDron(dronDto, null);});
+    void testCrearDronMatrizNula() {
+        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> {
+            dronService.crearDron(dronDto, null);
+        });
 
         assertEquals("La matriz de vuelo no puede ser nula", exception.getMessage());
     }
 
     @Test
-    void testCrearDronMismascoordenadas(){
+    void testCrearDronMismascoordenadas() {
 
         when(dronRepository.existsByXAndY(5, 5)).thenReturn(true);
 
@@ -94,15 +96,15 @@ public class DronServiceTest {
         dronNuevo.setY(5);
 
         IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> {
-            dronService.crearDron(dronNuevo, matrizVuelo);  
+            dronService.crearDron(dronNuevo, matrizVuelo);
         });
         assertEquals("Ya hay un dron en las coordenadas introducidas.", exception.getMessage());
     }
 
     @Test
-    void testEditarDron(){
+    void testEditarDron() {
         Dron dronExistente = new Dron();
-        dronExistente.setId(1);
+        dronExistente.setId(1L);
         dronExistente.setNombre("Dron Antiguo");
         dronExistente.setX(2);
         dronExistente.setY(2);
@@ -118,11 +120,11 @@ public class DronServiceTest {
     }
 
     @Test
-    void testEditarDronMismasCoord(){
+    void testEditarDronMismasCoord() {
         when(dronRepository.existsByXAndY(5, 5)).thenReturn(true);
 
         Dron dronNuevo = new Dron();
-        dronNuevo.setId(1);
+        dronNuevo.setId(1L);
         dronNuevo.setNombre("Dron Antiguo");
         dronNuevo.setX(1);
         dronNuevo.setY(3);
@@ -135,15 +137,15 @@ public class DronServiceTest {
         dronDto.setY(5);
 
         RuntimeException exception = assertThrows(RuntimeException.class, () -> {
-            dronService.editarDron(1, dronDto);  
+            dronService.editarDron(1, dronDto);
         });
         assertEquals("Ya hay un dron en las coordenadas introducidas.", exception.getMessage());
     }
 
     @Test
-    void testEliminarDron(){
+    void testEliminarDron() {
         Dron dron = new Dron();
-        dron.setId(1);
+        dron.setId(1L);
 
         when(dronRepository.findById(1)).thenReturn(Optional.of(dron));
 
@@ -153,9 +155,9 @@ public class DronServiceTest {
     }
 
     @Test
-    void testObtenerDron(){
+    void testObtenerDron() {
         Dron dron = new Dron();
-        dron.setId(1);
+        dron.setId(1L);
         dron.setX(5);
         dron.setY(5);
 
@@ -170,7 +172,7 @@ public class DronServiceTest {
     }
 
     @Test
-    void testMoverDron(){
+    void testMoverDron() {
         Dron dron = new Dron();
         dron.setX(5);
         dron.setY(5);
@@ -178,58 +180,57 @@ public class DronServiceTest {
         dron.setMatrizVuelo(matrizVuelo);
 
         when(dronRepository.findById(1)).thenReturn(Optional.of(dron));
-        when(dronRepository.save(any(Dron.class))).thenAnswer(invocation ->invocation.getArgument(0));
+        when(dronRepository.save(any(Dron.class))).thenAnswer(invocation -> invocation.getArgument(0));
 
         List<Ordenes> ordenes = List.of(Ordenes.MOVE_FORWARD, Ordenes.MOVE_FORWARD);
         Dron dronMovido = dronService.moverDron(1, ordenes);
 
-        assertEquals(7, dronMovido.getY());  
+        assertEquals(7, dronMovido.getY());
 
         verify(dronRepository, times(2)).save(any(Dron.class));
     }
 
     @Test
-    void testMoverGrupoDrones(){
+    void testMoverGrupoDrones() {
         Dron dronA = new Dron();
-        dronA.setId(5);
+        dronA.setId(5L);
         dronA.setNombre("Dron A");
         dronA.setModelo("modelo alphs");
         dronA.setX(2);
         dronA.setY(7);
         dronA.setOrientacion(Orientacion.valueOf("N"));
         dronA.setMatrizVuelo(matrizVuelo);
-    
+
         Dron dronB = new Dron();
-        dronB.setId(6);
+        dronB.setId(6L);
         dronB.setNombre("Dron B");
         dronB.setModelo("modelo Beta");
         dronB.setX(6);
         dronB.setY(3);
         dronB.setOrientacion(Orientacion.valueOf("O"));
         dronB.setMatrizVuelo(matrizVuelo);
-    
+
         List<Integer> dronsIds = List.of(5, 6);
         List<Ordenes> ordenes = List.of(Ordenes.MOVE_FORWARD, Ordenes.MOVE_FORWARD);
-    
+
         when(dronRepository.findAllById(dronsIds)).thenReturn(List.of(dronA, dronB));
         when(dronRepository.save(any(Dron.class))).thenAnswer(invocation -> invocation.getArgument(0));
-    
+
         List<Dron> dronesMovidos = dronService.moverDronesGrupales(dronsIds, ordenes);
-    
+
         assertEquals(5, dronesMovidos.get(0).getId());
         assertEquals(6, dronesMovidos.get(1).getId());
-    
+
         verify(dronRepository, atLeast(2)).save(any(Dron.class));
     }
-    
+
     @Test
-    void testListarTodosLosDrones(){
+    void testListarTodosLosDrones() {
 
         Dron dron1 = new Dron();
         dron1.setNombre("Dron 1");
         dron1.setModelo("Modelo A");
 
-        
         Dron dron2 = new Dron();
         dron2.setNombre("Dron 2");
         dron2.setModelo("Modelo H");
@@ -237,79 +238,91 @@ public class DronServiceTest {
         List<Dron> dronesLista = List.of(dron1, dron2);
 
         when(dronRepository.findAll()).thenReturn(dronesLista);
-        
+
         List<Dron> dronesObtenidos = dronService.obtenerTodosLosDrones();
 
         assertEquals(2, dronesObtenidos.size());
     }
 
     @Test
-    void testLimitesN(){
+    void testLimitesN() {
         Dron dron1 = new Dron();
         dron1.setX(5);
         dron1.setY(5);
         dron1.setOrientacion(Orientacion.N);
         dron1.setOrdenes(List.of(Ordenes.MOVE_FORWARD));
 
-        MatrizVuelo matrizVuelo = new MatrizVuelo(null,5,5, new ArrayList<>());
+        MatrizVuelo matrizVuelo = new MatrizVuelo(null, 5, 5, new ArrayList<>());
         dron1.setMatrizVuelo(matrizVuelo);
 
-        RuntimeException exception = assertThrows(RuntimeException.class, ()->{ dronService.ejecutarOrdenes(dron1);;});
+        RuntimeException exception = assertThrows(RuntimeException.class, () -> {
+            dronService.ejecutarOrdenes(dron1);
+            ;
+        });
 
         assertEquals("El dron saldria fuera de los limites del espacio asignado.", exception.getMessage());
 
     }
 
     @Test
-    void testLimitesS(){
+    void testLimitesS() {
         Dron dron1 = new Dron();
         dron1.setX(5);
         dron1.setY(0);
         dron1.setOrientacion(Orientacion.S);
         dron1.setOrdenes(List.of(Ordenes.MOVE_FORWARD));
 
-        MatrizVuelo matrizVuelo = new MatrizVuelo(null,5,5, new ArrayList<>());
+        MatrizVuelo matrizVuelo = new MatrizVuelo(null, 5, 5, new ArrayList<>());
         dron1.setMatrizVuelo(matrizVuelo);
 
-        RuntimeException exception = assertThrows(RuntimeException.class, ()->{ dronService.ejecutarOrdenes(dron1);;});
+        RuntimeException exception = assertThrows(RuntimeException.class, () -> {
+            dronService.ejecutarOrdenes(dron1);
+            ;
+        });
 
         assertEquals("El dron saldria fuera de los limites del espacio asignado.", exception.getMessage());
     }
 
     @Test
-    void testLimitesE(){
+    void testLimitesE() {
         Dron dron1 = new Dron();
         dron1.setX(5);
         dron1.setY(5);
         dron1.setOrientacion(Orientacion.E);
         dron1.setOrdenes(List.of(Ordenes.MOVE_FORWARD));
 
-        MatrizVuelo matrizVuelo = new MatrizVuelo(null,5,5, new ArrayList<>());
+        MatrizVuelo matrizVuelo = new MatrizVuelo(null, 5, 5, new ArrayList<>());
         dron1.setMatrizVuelo(matrizVuelo);
 
-        RuntimeException exception = assertThrows(RuntimeException.class, ()->{ dronService.ejecutarOrdenes(dron1);;});
+        RuntimeException exception = assertThrows(RuntimeException.class, () -> {
+            dronService.ejecutarOrdenes(dron1);
+            ;
+        });
 
         assertEquals("El dron saldria fuera de los limites del espacio asignado.", exception.getMessage());
     }
 
     @Test
-    void testLimitesO(){
+    void testLimitesO() {
         Dron dron1 = new Dron();
         dron1.setX(0);
         dron1.setY(5);
         dron1.setOrientacion(Orientacion.O);
         dron1.setOrdenes(List.of(Ordenes.MOVE_FORWARD));
 
-        MatrizVuelo matrizVuelo = new MatrizVuelo(null,5,5, new ArrayList<>());
+        MatrizVuelo matrizVuelo = new MatrizVuelo(null, 5, 5, new ArrayList<>());
         dron1.setMatrizVuelo(matrizVuelo);
 
-        RuntimeException exception = assertThrows(RuntimeException.class, ()->{ dronService.ejecutarOrdenes(dron1);;});
+        RuntimeException exception = assertThrows(RuntimeException.class, () -> {
+            dronService.ejecutarOrdenes(dron1);
+            ;
+        });
 
         assertEquals("El dron saldria fuera de los limites del espacio asignado.", exception.getMessage());
     }
 
     @Test
-    void testGirarIzq(){
+    void testGirarIzq() {
         Dron dronN = new Dron();
         dronN.setX(5);
         dronN.setY(5);
@@ -356,7 +369,7 @@ public class DronServiceTest {
     }
 
     @Test
-    void testGirarDER(){
+    void testGirarDER() {
         Dron dronN = new Dron();
         dronN.setX(5);
         dronN.setY(5);
@@ -404,7 +417,7 @@ public class DronServiceTest {
     }
 
     @Test
-    void testmoverAdelante(){
+    void testmoverAdelante() {
         Dron dronN = new Dron();
         dronN.setX(5);
         dronN.setY(5);
@@ -416,7 +429,6 @@ public class DronServiceTest {
         dronService.ejecutarOrdenes(dronN);
 
         assertEquals(6, dronN.getY());
-
 
         Dron dronS = new Dron();
         dronS.setX(5);

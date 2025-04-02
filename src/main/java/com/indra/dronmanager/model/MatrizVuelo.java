@@ -1,5 +1,6 @@
 package com.indra.dronmanager.model;
 
+import java.util.ArrayList;
 import java.util.List;
 import jakarta.persistence.*;
 import lombok.*;
@@ -30,7 +31,6 @@ public class MatrizVuelo {
     private int maxY;
 
     /** Lista de drones asignados a esta matriz de vuelo. */
-    @OneToMany(mappedBy = "matrizVuelo", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Dron> drones;
-
+    @OneToMany(mappedBy = "matrizVuelo", cascade = CascadeType.ALL)
+    private List<Dron> drones = new ArrayList<>();
 }

@@ -1,7 +1,6 @@
 package com.indra.dronmanager.service;
 
 import java.util.List;
-import java.util.Map;
 
 import org.springframework.stereotype.Service;
 
@@ -96,32 +95,6 @@ public class DronServiceImpl implements DronService {
         }
 
         dronRepository.save(dron);
-    }
-
-    @Override
-    public List<Dron> procesarOrdenesGrupales(Map<String, Object> request) {
-        Object dronIdsObj = request.get("dronIds");
-        Object ordenesObj = request.get("ordenes");
-
-        if (!(dronIdsObj instanceof List<?>) || !(ordenesObj instanceof List<?>)) {
-            throw new IllegalArgumentException("Formato de datos incorrecto.");
-        }
-
-        List<?> dronIdsRaw = (List<?>) dronIdsObj;
-        List<?> ordenesRaw = (List<?>) ordenesObj;
-
-        List<Integer> dronIds = dronIdsRaw.stream()
-                .filter(Integer.class::isInstance)
-                .map(Integer.class::cast)
-                .toList();
-
-        List<Ordenes> ordenes = ordenesRaw.stream()
-                .filter(String.class::isInstance)
-                .map(String.class::cast)
-                .map(Ordenes::valueOf)
-                .toList();
-
-        return moverDronesGrupales(dronIds, ordenes);
     }
 
     private void moverAdelante(Dron dron) {
@@ -221,4 +194,5 @@ public class DronServiceImpl implements DronService {
 
         return dron;
     }
+
 }

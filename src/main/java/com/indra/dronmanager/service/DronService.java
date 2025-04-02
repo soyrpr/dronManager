@@ -1,7 +1,6 @@
 package com.indra.dronmanager.service;
 
 import java.util.List;
-import java.util.Map;
 
 import com.indra.dronmanager.dto.DronDto;
 import com.indra.dronmanager.model.Dron;
@@ -81,12 +80,4 @@ public interface DronService {
      */
     List<Dron> moverDronesGrupales(List<Integer> dronIds, List<Ordenes> ordenes);
 
-    /**
-     * Procesa las órdenes grupales de drones a partir de una solicitud.
-     * 
-     * @param request El mapa que contiene la solicitud con los IDs de los drones y
-     *                las órdenes a ejecutar.
-     * @return Una lista con los drones después de procesar las órdenes.
-     */
-    List<Dron> procesarOrdenesGrupales(Map<String, Object> request);
 }

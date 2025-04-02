@@ -19,7 +19,7 @@ public class Dron {
     /** Identificador único del dron. */
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int id;
+    private Long id;
 
     /** Nombre del dron. */
     @Column(nullable = false)
